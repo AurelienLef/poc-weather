@@ -48,7 +48,6 @@ const defaultWeather: TWeather = {
 export const Weather = () => {
     const [weather, setWeather] = useState<TWeather>(defaultWeather)
     const [city, setCity] = useState('')
-    const [change, setChange] = useState(false)
     const [erreurs, setErreurs] = useState('')
 
     useEffect(() => {
@@ -114,8 +113,7 @@ export const Weather = () => {
             localStorage.setItem('date', `${date}`)
             changement = true
         }
-
-        setChange(changement)
+        
         if (changement) {
             getWeather()
         }

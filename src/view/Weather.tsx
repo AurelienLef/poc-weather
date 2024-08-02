@@ -175,6 +175,7 @@ export const Weather = () => {
             localStorage.setItem('city', response.data.name)
 
             setWeather(meteo)
+            setCity(response.data.name)
         }).catch(error => {
             let errorMsg = "Erreur lors de la requête"
             if (error.response) {

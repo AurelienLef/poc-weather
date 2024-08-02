@@ -13,9 +13,6 @@ import bcgCloudN from '../images/night/clouds.jpg'
 import arrow from '../images/arrow.png'
 
 
-// FAIRE UN BOUTON POUR RELANCER UNE REQ + DISABLE LE BOUTON LE TEMPS DE LA REQ
-// ENLEVER LES CONSOLE.LOG
-
 const API_KEY = "c6dea39f86ea31dc114f0a4f0eec8fa9";
 
 type TWeather = {
@@ -55,15 +52,15 @@ export const Weather = () => {
     const [erreurs, setErreurs] = useState('')
 
     useEffect(() => {
-        // localStorage.clear()
         pos()
     }, [])
     
-
+    // Initialise le 'cache' ou récupère les données si déjà initialisé
     const initCache = (coord: number[]) => {
         let date =  Date.now()
         let changement = false
 
+        // Si déjà initialisé
         if (localStorage.getItem('latitude')) {
             const latStr: string | null = localStorage.getItem('latitude');
             let lat: number | null = latStr !== null ? parseFloat(latStr) : null
@@ -74,21 +71,19 @@ export const Weather = () => {
             const dateReqStr: string | null = localStorage.getItem('date');
             let dateReq: number | null = dateReqStr !== null ? parseFloat(dateReqStr) : null
 
+            // Conditions pour une nouvelle requête
             if (
                 (lat !== null && (lat - coord[0] > 0.027 || lat - coord[0] < -0.027)) || 
                 (long !== null && (long - coord[1] > 0.04 || long - coord[1] < -0.04)) ||
                 (dateReq !== null && date - dateReq > 900000)
 
             ) {
-                console.log("bouger")
                 localStorage.setItem('latitude', String(coord[0]))
                 localStorage.setItem('longitude', String(coord[1]))
                 localStorage.setItem('date', `${date}`)
                 changement = true
 
             }else {
-                console.log("pas bouger")
-
                 const temperatureStr = localStorage.getItem('temperature')
                 const tempsStr = localStorage.getItem('temps')
                 const detailStr = localStorage.getItem('detail')
@@ -118,7 +113,6 @@ export const Weather = () => {
             localStorage.setItem('longitude', String(coord[1]))
             localStorage.setItem('date', `${date}`)
             changement = true
-            console.log('debug')
         }
 
         setChange(changement)
@@ -127,6 +121,7 @@ export const Weather = () => {
         }
     }
     
+    // Récupère les coordonnées
     const pos = () => {
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {
@@ -142,60 +137,56 @@ export const Weather = () => {
         }
     }
 
+    // Requête API
     const getWeather = async () => {
-        console.log('bug')
+        if (localStorage.getItem('latitude') == null) {
+            setErreurs("Erreur lors de la lecture des coordonnées.")
+        }
 
-            console.log("New req")
-            if (localStorage.getItem('latitude') == null) {
-                setErreurs("Erreur lors de la lecture des coordonnées.")
+        let latitude = localStorage.getItem('latitude')
+        let longitude = localStorage.getItem('longitude')
+
+        await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+            params: {
+                lat: latitude,
+                lon: longitude,
+                appid: API_KEY,
+                units: 'metric',
+                lang: 'fr',
             }
-    
-            let latitude = localStorage.getItem('latitude')
-            let longitude = localStorage.getItem('longitude')
-    
-            await axios.get('https://api.openweathermap.org/data/2.5/weather', {
-                params: {
-                    lat: latitude,
-                    lon: longitude,
-                    appid: API_KEY,
-                    units: 'metric',
-                    lang: 'fr',
-                }
-            })
-            .then(response => {
-                console.log(response)
-                let vent = {
-                    'vitesse': response.data.wind.speed,
-                    'degre': response.data.wind.deg,
-                }
-                let meteo = {
-                    'temperature': response.data.main.temp,
-                    'temps': response.data.weather[0].main,
-                    'detail': response.data.weather[0].description,
-                    'humidité': response.data.main.humidity,
-                    'vent': vent,
-                }
-                console.log("meteo = "+meteo.humidité)
+        })
+        .then(response => {
+            let vent = {
+                'vitesse': response.data.wind.speed,
+                'degre': response.data.wind.deg,
+            }
+            let meteo = {
+                'temperature': response.data.main.temp,
+                'temps': response.data.weather[0].main,
+                'detail': response.data.weather[0].description,
+                'humidité': response.data.main.humidity,
+                'vent': vent,
+            }
 
-                localStorage.setItem('temperature', response.data.main.temp)
-                localStorage.setItem('temps', response.data.weather[0].main)  
-                localStorage.setItem('detail', response.data.weather[0].description)
-                localStorage.setItem('humidité', response.data.main.humidity)
-                localStorage.setItem('ventV', vent.vitesse)
-                localStorage.setItem('ventD', vent.degre)
-                localStorage.setItem('city', response.data.name)
+            localStorage.setItem('temperature', response.data.main.temp)
+            localStorage.setItem('temps', response.data.weather[0].main)  
+            localStorage.setItem('detail', response.data.weather[0].description)
+            localStorage.setItem('humidité', response.data.main.humidity)
+            localStorage.setItem('ventV', vent.vitesse)
+            localStorage.setItem('ventD', vent.degre)
+            localStorage.setItem('city', response.data.name)
 
-                setWeather(meteo)
-            }).catch(error => {
-                let errorMsg = "Erreur lors de la requête"
-                if (error.response) {
-                    errorMsg += " : "+error.response.status
-                }
-                setErreurs(errorMsg)
-            })
-            console.log('fin')
+            setWeather(meteo)
+        }).catch(error => {
+            let errorMsg = "Erreur lors de la requête"
+            if (error.response) {
+                errorMsg += " : "+error.response.status
+            }
+            setErreurs(errorMsg)
+        })
     }
 
+    // Affichage des données
     const display = () => {
         let date = new Date
         if (weather !== defaultWeather) {
@@ -223,12 +214,12 @@ export const Weather = () => {
                 <>
                     <p className={classes.dateDE}>{date.getHours()+":"+date.getMinutes()}</p>
                     <p className={classes.textDE}>{erreurs !== '' ? erreurs : 'Votre position..'}</p>
-                    {console.log(erreurs)}
                 </>
             )
         }
     }
 
+    // Style du background
     const styleBcg = () => {
         let bgImage: TbackG = {
             backgroundSize: 'cover',
@@ -298,10 +289,7 @@ export const Weather = () => {
 
     return (
         <div className={classes.Weather} style={styleBcg()}>
-            <>
-                {console.log("temps "+localStorage.getItem('temperature')+" - "+change)}
-                {display()}
-            </>
+            {display()}
         </div>
     );
 

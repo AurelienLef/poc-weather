@@ -6,10 +6,6 @@
     justify-content: center;
 }
 
-.fade {
-    opacity: 0;
-}
-
 .container {
     border: 1px solid;
     border-radius: 10%;

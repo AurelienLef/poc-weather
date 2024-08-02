@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'montserrat';
+  src: url(../src/config/static/Montserrat-Medium.ttf);
+}
+
+*{
+  margin: 0;
+  font-family: 'montserrat', 'helvetica', 'arial';
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

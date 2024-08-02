@@ -1,0 +1,100 @@
+.Weather{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.fade {
+    opacity: 0;
+}
+
+.container {
+    border: 1px solid;
+    border-radius: 10%;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.titre{
+    font-size: 2rem;
+}
+
+.position{
+    font-size: 1.5rem;
+}
+
+.infos{
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+    text-align: left;
+}
+
+.degre {
+    font-size: 3rem;
+    padding: 30px;
+}
+
+.details{
+    margin-left: 10px;
+    font-size: 1.2rem;
+}
+
+.details > p:not(:first-of-type) {
+    margin-top: 10px;
+}
+
+.details :last-child{
+    display: flex;
+}
+
+.arrow {
+    width: 30px;
+    margin: 0 10px;
+}
+
+.dateDE {
+    font-size: 3rem;
+}
+
+.textDE {
+    font-size: 1.5rem;
+}
+
+@media screen and (max-width: 775px) {
+    .textDE {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 530px){
+    .titre{
+        font-size: 1.5rem;
+    }
+    
+    .position{
+        font-size: 1.2rem;
+    }
+    
+    .infos{
+        display: flex;
+        align-items: center;
+    }
+    
+    .degre {
+        font-size: 2rem;
+        padding: 20px;
+    }
+
+    .details{
+        margin-left: 5px;
+        font-size: 1rem;
+    }
+    
+    .details > p:not(:first-of-type) {
+        margin-top: 10px;
+    }
+}
